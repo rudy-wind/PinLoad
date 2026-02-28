@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PinLoad — Pinterest Downloader</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+          colors: {
+            pine: {
+              50:'#fff0f0', 100:'#ffe0e0', 200:'#ffc0c0', 300:'#ff9090',
+              400:'#ff5555', 500:'#e60023', 600:'#c0001c', 700:'#9a0015',
+              800:'#7a0011', 900:'#5a000d'
+            },
+            cream: { 50:'#fffdf8', 100:'#fffaef', 200:'#fff3d6' },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-cream-50 text-gray-800 antialiased" style="font-family:'DM Sans',sans-serif;">
+
+<!-- ══ LANGUAGE SWITCHER ══ -->
+<div class="fixed top-4 right-4 z-50 flex items-center bg-white border border-gray-200 rounded-full px-1 py-1 shadow-md gap-1">
+  <button id="btn-id" onclick="setLang('id')" class="text-xs font-semibold px-3 py-1 rounded-full transition-all">🇮🇩 ID</button>
+  <button id="btn-en" onclick="setLang('en')" class="text-xs font-semibold px-3 py-1 rounded-full transition-all">🇺🇸 EN</button>
+</div>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.32.32 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/>
+        </svg>
+      </div>
+      <span style="font-family:'Playfair Display',serif;" class="font-bold text-xl text-gray-900">Pin<span class="text-red-600">Load</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+      <a href="#services" class="hover:text-red-600 transition-colors" data-id="Layanan" data-en="Services">Services</a>
+      <a href="#how-to" class="hover:text-red-600 transition-colors" data-id="Cara Download" data-en="How To">How To</a>
+      <a href="#formats" class="hover:text-red-600 transition-colors" data-id="Format" data-en="Formats">Formats</a>
+      <a href="#faq" class="hover:text-red-600 transition-colors">FAQ</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="relative overflow-hidden bg-gradient-to-br from-red-600 via-red-700 to-rose-900 text-white py-20 px-4">
+  <div class="absolute -top-24 -left-24 w-96 h-96 bg-white opacity-5 rounded-full"></div>
+  <div class="absolute -bottom-16 -right-16 w-72 h-72 bg-red-300 opacity-10 rounded-full"></div>
+  <div class="absolute top-16 right-1/3 w-24 h-24 bg-white opacity-5 rounded-full"></div>
+
+  <div class="max-w-3xl mx-auto text-center relative z-10">
+    <div class="inline-flex items-center gap-2 bg-white bg-opacity-15 border border-white border-opacity-25 rounded-full px-4 py-1.5 text-sm font-medium mb-6">
+      <span class="w-2 h-2 bg-green-400 rounded-full" style="animation:pulse 2s infinite;"></span>
+      <span data-id="Gratis · Cepat · Tanpa Watermark" data-en="Free · Fast · No Watermark">Free · Fast · No Watermark</span>
+    </div>
+    <h1 style="font-family:'Playfair Display',serif;" class="text-4xl md:text-6xl font-black leading-tight mb-4">
+      Pinterest <span class="text-red-200">Downloader</span>
+    </h1>
+    <p class="text-red-100 text-lg md:text-xl mb-10 max-w-xl mx-auto" data-id="Unduh video dan foto Pinterest dengan kualitas terbaik. Cepat, gratis, dan mudah digunakan." data-en="Download Pinterest videos and photos in the highest quality. Fast, free, and easy to use.">
+      Download Pinterest videos and photos in the highest quality. Fast, free, and easy to use.
+    </p>
+
+    <!-- INPUT -->
+    <div class="bg-white rounded-2xl p-2 shadow-2xl flex gap-2 max-w-2xl mx-auto">
+      <input
+        id="pin-url"
+        type="text"
+        placeholder="https://www.pinterest.com/pin/..."
+        class="flex-1 px-4 py-3 text-gray-800 text-sm rounded-xl outline-none placeholder-gray-400"
+      />
+      <button
+        onclick="downloadPin()"
+        class="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold px-6 py-3 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        <span data-id="Download" data-en="Download">Download</span>
+      </button>
+    </div>
+    <p class="text-red-200 text-xs mt-3" data-id="Mendukung pinterest.com/pin/... dan tautan pendek pin.it/..." data-en="Supports pinterest.com/pin/... and pin.it/... short links">
+      Supports pinterest.com/pin/... and pin.it/... short links
+    </p>
+  </div>
+</section>
+
+<!-- ══ RESULT ══ -->
+<section id="result-section" class="max-w-3xl mx-auto px-4 py-10 hidden">
+
+  <!-- Loading -->
+  <div id="loading-state" class="hidden text-center py-16">
+    <div class="inline-flex flex-col items-center gap-4">
+      <div class="w-14 h-14 border-4 border-red-200 border-t-red-600 rounded-full" style="animation:spin 1s linear infinite;"></div>
+      <p class="text-gray-400 text-sm" data-id="Mengambil data pin..." data-en="Fetching pin data...">Fetching pin data...</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div id="error-state" class="hidden bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+    <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <p id="error-message" class="text-red-700 font-medium text-sm"></p>
+    <button onclick="resetForm()" class="mt-4 text-xs text-red-500 underline" data-id="Coba lagi" data-en="Try again">Try again</button>
+  </div>
+
+  <!-- Success -->
+  <div id="success-state" class="hidden">
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+
+      <!-- Preview Area -->
+      <div id="preview-container" class="relative bg-gray-950 flex items-center justify-center" style="min-height:200px;max-height:400px;overflow:hidden;">
+        <video id="preview-video" class="hidden w-full object-contain" style="max-height:400px;" controls playsinline></video>
+        <img id="preview-image" class="hidden w-full object-contain" style="max-height:400px;" alt="Pin preview" />
+        <div id="type-badge" class="absolute top-3 left-3 text-xs font-bold px-3 py-1 rounded-full"></div>
+        <div id="duration-badge" class="hidden absolute top-3 right-3 bg-black bg-opacity-60 text-white text-xs font-medium px-2.5 py-1 rounded-full"></div>
+      </div>
+
+      <!-- Info -->
+      <div class="p-6">
+
+        <!-- Uploader -->
+        <div id="uploader-row" class="hidden flex items-center gap-3 mb-5 pb-5 border-b border-gray-100">
+          <img id="uploader-avatar" class="w-11 h-11 rounded-full object-cover bg-gray-100 ring-2 ring-red-100" src="" alt="avatar" onerror="this.src='data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 40 40&quot;><rect fill=&quot;%23f3f4f6&quot; width=&quot;40&quot; height=&quot;40&quot; rx=&quot;20&quot;/><text y=&quot;26&quot; x=&quot;50%&quot; text-anchor=&quot;middle&quot; font-size=&quot;18&quot; fill=&quot;%239ca3af&quot;>P</text></svg>'" />
+          <div>
+            <p id="uploader-name" class="font-semibold text-sm text-gray-900 leading-tight"></p>
+            <a id="uploader-link" href="#" target="_blank" class="text-xs text-red-500 hover:underline">@<span id="uploader-username"></span></a>
+          </div>
+        </div>
+
+        <!-- Title & Desc -->
+        <h3 id="pin-title" style="font-family:'Playfair Display',serif;" class="hidden font-bold text-xl text-gray-900 mb-2 leading-snug"></h3>
+        <p id="pin-desc" class="hidden text-gray-500 text-sm leading-relaxed mb-5"></p>
+
+        <!-- Image Downloads -->
+        <div id="image-section" class="hidden mb-5">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2" data-id="Gambar Tersedia" data-en="Available Images">Available Images</p>
+          <div id="image-buttons" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Video Downloads -->
+        <div id="video-section" class="hidden mb-5">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2" data-id="Video Tersedia" data-en="Available Videos">Available Videos</p>
+          <div id="video-buttons" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Primary CTA -->
+        <a id="main-dl-btn" href="#" target="_blank"
+           class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-3.5 px-6 rounded-xl transition-all text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          <span data-id="Unduh Kualitas Terbaik" data-en="Download Best Quality">Download Best Quality</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Reset -->
+    <div class="text-center mt-4">
+      <button onclick="resetForm()" class="text-sm text-gray-400 hover:text-red-500 transition-colors underline" data-id="Cari pin lain" data-en="Search another pin">Search another pin</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section id="services" class="max-w-6xl mx-auto px-4 py-20">
+  <div class="text-center mb-12">
+    <p class="text-red-600 font-semibold text-xs uppercase tracking-widest mb-2" data-id="Apa yang Kami Tawarkan" data-en="What We Offer">What We Offer</p>
+    <h2 style="font-family:'Playfair Display',serif;" class="text-3xl md:text-4xl font-black text-gray-900" data-id="Layanan Kami" data-en="Our Services">Our Services</h2>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+      <div class="w-12 h-12 bg-red-50 group-hover:bg-red-100 rounded-xl flex items-center justify-center mb-4 transition-colors">
+        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </div>
+      <h3 style="font-family:'Playfair Display',serif;" class="font-bold text-lg mb-2 text-gray-900" data-id="Unduh Video" data-en="Video Download">Video Download</h3>
+      <p class="text-gray-500 text-sm leading-relaxed" data-id="Unduh video Pinterest berkualitas HD — format MP4, hingga resolusi 1080p." data-en="Download Pinterest videos in HD quality — MP4 format, up to 1080p resolution.">Download Pinterest videos in HD quality — MP4 format, up to 1080p resolution.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+      <div class="w-12 h-12 bg-pink-50 group-hover:bg-pink-100 rounded-xl flex items-center justify-center mb-4 transition-colors">
+        <svg class="w-6 h-6 text-pink-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+      <h3 style="font-family:'Playfair Display',serif;" class="font-bold text-lg mb-2 text-gray-900" data-id="Unduh Foto" data-en="Photo Download">Photo Download</h3>
+      <p class="text-gray-500 text-sm leading-relaxed" data-id="Simpan foto Pinterest dengan kualitas asli — JPEG/PNG/WebP, tanpa kompresi." data-en="Save Pinterest photos in original quality — JPEG/PNG/WebP, no compression.">Save Pinterest photos in original quality — JPEG/PNG/WebP, no compression.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+      <div class="w-12 h-12 bg-orange-50 group-hover:bg-orange-100 rounded-xl flex items-center justify-center mb-4 transition-colors">
+        <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h3 style="font-family:'Playfair Display',serif;" class="font-bold text-lg mb-2 text-gray-900" data-id="Info Pin" data-en="Pin Info Extractor">Pin Info Extractor</h3>
+      <p class="text-gray-500 text-sm leading-relaxed" data-id="Tampilkan judul, deskripsi, dan profil pengunggah dari pin Pinterest mana saja." data-en="Extract title, description, and uploader profile from any Pinterest pin.">Extract title, description, and uploader profile from any Pinterest pin.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+      <div class="w-12 h-12 bg-green-50 group-hover:bg-green-100 rounded-xl flex items-center justify-center mb-4 transition-colors">
+        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3 style="font-family:'Playfair Display',serif;" class="font-bold text-lg mb-2 text-gray-900" data-id="Tanpa Login" data-en="No Login Required">No Login Required</h3>
+      <p class="text-gray-500 text-sm leading-relaxed" data-id="Tidak perlu akun atau login. Tempel URL Pinterest dan klik unduh." data-en="No account or login needed. Just paste the Pinterest URL and hit download.">No account or login needed. Just paste the Pinterest URL and hit download.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+      <div class="w-12 h-12 bg-blue-50 group-hover:bg-blue-100 rounded-xl flex items-center justify-center mb-4 transition-colors">
+        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <h3 style="font-family:'Playfair Display',serif;" class="font-bold text-lg mb-2 text-gray-900" data-id="Super Cepat" data-en="Lightning Fast">Lightning Fast</h3>
+      <p class="text-gray-500 text-sm leading-relaxed" data-id="Didukung Cloudflare Workers — hasil dalam kurang dari 2 detik." data-en="Powered by Cloudflare Workers — results in under 2 seconds.">Powered by Cloudflare Workers — results in under 2 seconds.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+      <div class="w-12 h-12 bg-purple-50 group-hover:bg-purple-100 rounded-xl flex items-center justify-center mb-4 transition-colors">
+        <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      </div>
+      <h3 style="font-family:'Playfair Display',serif;" class="font-bold text-lg mb-2 text-gray-900" data-id="100% Gratis" data-en="100% Free">100% Free</h3>
+      <p class="text-gray-500 text-sm leading-relaxed" data-id="Tidak ada langganan, tidak ada biaya tersembunyi. PinLoad sepenuhnya gratis." data-en="No subscription, no hidden fees. PinLoad is completely free to use.">No subscription, no hidden fees. PinLoad is completely free to use.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ HOW TO ══ -->
+<section id="how-to" class="bg-white border-y border-gray-100 py-20 px-4">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-14">
+      <p class="text-red-600 font-semibold text-xs uppercase tracking-widest mb-2" data-id="Langkah Mudah" data-en="Simple Steps">Simple Steps</p>
+      <h2 style="font-family:'Playfair Display',serif;" class="text-3xl md:text-4xl font-black text-gray-900" data-id="Cara Mengunduh" data-en="How To Download">How To Download</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+      <div class="flex flex-col items-center text-center">
+        <div class="w-16 h-16 bg-red-600 text-white rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:900;">1</div>
+        <h4 style="font-family:'Playfair Display',serif;" class="font-bold text-lg mb-2 text-gray-900" data-id="Salin URL Pinterest" data-en="Copy Pinterest URL">Copy Pinterest URL</h4>
+        <p class="text-gray-500 text-sm leading-relaxed" data-id="Buka Pinterest, temukan pin yang diinginkan, ketuk Bagikan, lalu salin tautannya." data-en="Open Pinterest, find the pin you want, tap Share, then copy the link.">Open Pinterest, find the pin you want, tap Share, then copy the link.</p>
+      </div>
+
+      <div class="flex flex-col items-center text-center">
+        <div class="w-16 h-16 bg-red-600 text-white rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:900;">2</div>
+        <h4 style="font-family:'Playfair Display',serif;" class="font-bold text-lg mb-2 text-gray-900" data-id="Tempel & Klik Download" data-en="Paste & Click Download">Paste &amp; Click Download</h4>
+        <p class="text-gray-500 text-sm leading-relaxed" data-id="Tempel URL yang disalin ke kotak input di atas dan klik tombol Download." data-en="Paste the copied URL into the input box above and click the Download button.">Paste the copied URL into the input box above and click the Download button.</p>
+      </div>
+
+      <div class="flex flex-col items-center text-center">
+        <div class="w-16 h-16 bg-red-600 text-white rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:900;">3</div>
+        <h4 style="font-family:'Playfair Display',serif;" class="font-bold text-lg mb-2 text-gray-900" data-id="Simpan File Anda" data-en="Save Your File">Save Your File</h4>
+        <p class="text-gray-500 text-sm leading-relaxed" data-id="Pilih kualitas yang diinginkan dan klik tautan unduhan untuk menyimpan file ke perangkat Anda." data-en="Choose your preferred quality and click the download link to save the file to your device.">Choose your preferred quality and click the download link to save the file to your device.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ FORMATS ══ -->
+<section id="formats" class="max-w-6xl mx-auto px-4 py-20">
+  <div class="text-center mb-12">
+    <p class="text-red-600 font-semibold text-xs uppercase tracking-widest mb-2" data-id="Yang Anda Dapatkan" data-en="What You Get">What You Get</p>
+    <h2 style="font-family:'Playfair Display',serif;" class="text-3xl md:text-4xl font-black text-gray-900" data-id="Kualitas & Format yang Didukung" data-en="Supported Quality & Formats">Supported Quality &amp; Formats</h2>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Video -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div class="bg-gradient-to-r from-red-600 to-rose-700 px-6 py-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <h3 style="font-family:'Playfair Display',serif;" class="font-bold text-white text-lg" data-id="Format Video" data-en="Video Formats">Video Formats</h3>
+      </div>
+      <div class="p-6">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-xs text-gray-400 uppercase tracking-wider">
+              <th class="pb-3" data-id="Format" data-en="Format">Format</th>
+              <th class="pb-3" data-id="Kualitas" data-en="Quality">Quality</th>
+              <th class="pb-3" data-id="Status" data-en="Status">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <tr><td class="py-2.5 font-medium text-gray-700">MP4</td><td class="py-2.5 text-gray-500">1080p HD</td><td class="py-2.5"><span class="inline-flex items-center gap-1 text-green-600 font-semibold text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>Supported</span></td></tr>
+            <tr><td class="py-2.5 font-medium text-gray-700">MP4</td><td class="py-2.5 text-gray-500">720p HD</td><td class="py-2.5"><span class="inline-flex items-center gap-1 text-green-600 font-semibold text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>Supported</span></td></tr>
+            <tr><td class="py-2.5 font-medium text-gray-700">MP4</td><td class="py-2.5 text-gray-500">480p SD</td><td class="py-2.5"><span class="inline-flex items-center gap-1 text-green-600 font-semibold text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>Supported</span></td></tr>
+            <tr><td class="py-2.5 font-medium text-gray-700">HLS/M3U8</td><td class="py-2.5 text-gray-500">Adaptive</td><td class="py-2.5"><span class="inline-flex items-center gap-1 text-green-600 font-semibold text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>Supported</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Image -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div class="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <h3 style="font-family:'Playfair Display',serif;" class="font-bold text-white text-lg" data-id="Format Gambar" data-en="Image Formats">Image Formats</h3>
+      </div>
+      <div class="p-6">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-xs text-gray-400 uppercase tracking-wider">
+              <th class="pb-3" data-id="Format" data-en="Format">Format</th>
+              <th class="pb-3" data-id="Kualitas" data-en="Quality">Quality</th>
+              <th class="pb-3" data-id="Status" data-en="Status">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <tr><td class="py-2.5 font-medium text-gray-700">JPEG</td><td class="py-2.5 text-gray-500" data-id="Original / Asli" data-en="Original">Original</td><td class="py-2.5"><span class="inline-flex items-center gap-1 text-green-600 font-semibold text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>Supported</span></td></tr>
+            <tr><td class="py-2.5 font-medium text-gray-700">PNG</td><td class="py-2.5 text-gray-500" data-id="Original / Asli" data-en="Original">Original</td><td class="py-2.5"><span class="inline-flex items-center gap-1 text-green-600 font-semibold text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>Supported</span></td></tr>
+            <tr><td class="py-2.5 font-medium text-gray-700">WebP</td><td class="py-2.5 text-gray-500" data-id="Original / Asli" data-en="Original">Original</td><td class="py-2.5"><span class="inline-flex items-center gap-1 text-green-600 font-semibold text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>Supported</span></td></tr>
+            <tr><td class="py-2.5 font-medium text-gray-700">Multi-size</td><td class="py-2.5 text-gray-500">236px – 1200px</td><td class="py-2.5"><span class="inline-flex items-center gap-1 text-green-600 font-semibold text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>Supported</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section id="faq" class="bg-white border-y border-gray-100 py-20 px-4">
+  <div class="max-w-3xl mx-auto">
+    <div class="text-center mb-12">
+      <p class="text-red-600 font-semibold text-xs uppercase tracking-widest mb-2" data-id="Ada Pertanyaan?" data-en="Got Questions?">Got Questions?</p>
+      <h2 style="font-family:'Playfair Display',serif;" class="text-3xl md:text-4xl font-black text-gray-900" data-id="Pertanyaan yang Sering Diajukan" data-en="Frequently Asked Questions">Frequently Asked Questions</h2>
+    </div>
+
+    <div id="faq-list" class="space-y-3">
+
+      <div class="faq-item bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+        <button class="faq-btn w-full text-left px-5 py-4 flex justify-between items-center font-semibold text-gray-800 text-sm hover:text-red-600 transition-colors">
+          <span data-id="Apakah PinLoad sepenuhnya gratis?" data-en="Is PinLoad completely free?">Is PinLoad completely free?</span>
+          <svg class="faq-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-body hidden px-5 pb-5 text-sm text-gray-500 leading-relaxed" data-id="Ya! PinLoad 100% gratis. Tidak ada langganan, pendaftaran, maupun biaya tersembunyi." data-en="Yes! PinLoad is 100% free. No subscriptions, no registration, and no hidden fees.">Yes! PinLoad is 100% free. No subscriptions, no registration, and no hidden fees.</div>
+      </div>
+
+      <div class="faq-item bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+        <button class="faq-btn w-full text-left px-5 py-4 flex justify-between items-center font-semibold text-gray-800 text-sm hover:text-red-600 transition-colors">
+          <span data-id="Bisakah saya mengunduh pin pribadi?" data-en="Can I download private pins?">Can I download private pins?</span>
+          <svg class="faq-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-body hidden px-5 pb-5 text-sm text-gray-500 leading-relaxed" data-id="Tidak. PinLoad hanya dapat mengunduh pin publik. Pin dari papan pribadi tidak dapat diakses." data-en="No. PinLoad can only download public pins. Private or secret board pins are not accessible.">No. PinLoad can only download public pins. Private or secret board pins are not accessible.</div>
+      </div>
+
+      <div class="faq-item bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+        <button class="faq-btn w-full text-left px-5 py-4 flex justify-between items-center font-semibold text-gray-800 text-sm hover:text-red-600 transition-colors">
+          <span data-id="Apakah PinLoad menambahkan watermark?" data-en="Does PinLoad add a watermark?">Does PinLoad add a watermark?</span>
+          <svg class="faq-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-body hidden px-5 pb-5 text-sm text-gray-500 leading-relaxed" data-id="Tidak pernah. Semua file diunduh langsung dari server Pinterest — tanpa modifikasi, tanpa watermark." data-en="Never. All files are downloaded directly from Pinterest's servers — no modification, no watermark.">Never. All files are downloaded directly from Pinterest's servers — no modification, no watermark.</div>
+      </div>
+
+      <div class="faq-item bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+        <button class="faq-btn w-full text-left px-5 py-4 flex justify-between items-center font-semibold text-gray-800 text-sm hover:text-red-600 transition-colors">
+          <span data-id="Bagaimana cara mendapatkan URL pin Pinterest?" data-en="How do I get a Pinterest pin URL?">How do I get a Pinterest pin URL?</span>
+          <svg class="faq-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-body hidden px-5 pb-5 text-sm text-gray-500 leading-relaxed" data-id="Buka Pinterest, ketuk ikon tiga titik pada pin, pilih 'Salin tautan', dan tempel di sini. Tautan pendek pin.it juga bisa digunakan." data-en="Open Pinterest, tap the three-dot icon on a pin, select 'Copy link', and paste it here. Short pin.it links also work.">Open Pinterest, tap the three-dot icon on a pin, select 'Copy link', and paste it here. Short pin.it links also work.</div>
+      </div>
+
+      <div class="faq-item bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+        <button class="faq-btn w-full text-left px-5 py-4 flex justify-between items-center font-semibold text-gray-800 text-sm hover:text-red-600 transition-colors">
+          <span data-id="Apakah legal mengunduh konten Pinterest?" data-en="Is it legal to download Pinterest content?">Is it legal to download Pinterest content?</span>
+          <svg class="faq-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-body hidden px-5 pb-5 text-sm text-gray-500 leading-relaxed" data-id="Hanya unduh konten yang Anda berhak unduh atau yang berada dalam domain publik. Selalu hormati hak cipta dan hak pencipta asli." data-en="Only download content you have the right to download or content in the public domain. Always respect copyright and the original creator's rights.">Only download content you have the right to download or content in the public domain. Always respect copyright and the original creator's rights.</div>
+      </div>
+
+      <div class="faq-item bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+        <button class="faq-btn w-full text-left px-5 py-4 flex justify-between items-center font-semibold text-gray-800 text-sm hover:text-red-600 transition-colors">
+          <span data-id="Browser dan perangkat apa yang didukung?" data-en="What browsers and devices are supported?">What browsers and devices are supported?</span>
+          <svg class="faq-chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-body hidden px-5 pb-5 text-sm text-gray-500 leading-relaxed" data-id="PinLoad bekerja di semua browser modern (Chrome, Firefox, Safari, Edge) dan di semua perangkat termasuk smartphone dan tablet." data-en="PinLoad works on all modern browsers (Chrome, Firefox, Safari, Edge) and on all devices including smartphones and tablets.">PinLoad works on all modern browsers (Chrome, Firefox, Safari, Edge) and on all devices including smartphones and tablets.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="bg-gray-950 text-gray-500 py-12 px-4">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-6">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.32.32 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+        </div>
+        <span style="font-family:'Playfair Display',serif;" class="font-bold text-xl text-white">Pin<span class="text-red-500">Load</span></span>
+      </div>
+      <p class="text-sm text-center" data-id="PinLoad adalah alat independen yang tidak berafiliasi dengan Pinterest, Inc." data-en="PinLoad is an independent tool not affiliated with Pinterest, Inc.">PinLoad is an independent tool not affiliated with Pinterest, Inc.</p>
+      <p class="text-xs">© 2025 PinLoad</p>
+    </div>
+    <div class="border-t border-gray-800 pt-6 text-center text-xs text-gray-600">
+      <span data-id="Alat ini hanya untuk penggunaan pribadi. Harap hormati hak cipta dan hak kekayaan intelektual." data-en="This tool is for personal use only. Please respect copyright and intellectual property rights.">This tool is for personal use only. Please respect copyright and intellectual property rights.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ INLINE ANIMATION STYLES (Tailwind-only safe, using style attr) ══ -->
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+</style>
+
+<script>
+const API_BASE = 'https://pinterest.rudiwind10026.workers.dev';
+
+/* ─── Cookie ─── */
+function setCookie(name, val, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + days * 86400000);
+  document.cookie = `${name}=${val};expires=${d.toUTCString()};path=/;SameSite=Lax`;
+}
+function getCookie(name) {
+  const kv = document.cookie.split(';').find(c => c.trim().startsWith(name + '='));
+  return kv ? kv.trim().split('=')[1] : null;
+}
+
+/* ─── Language ─── */
+function applyLang(lang) {
+  document.querySelectorAll('[data-id][data-en]').forEach(el => {
+    const txt = lang === 'id' ? el.getAttribute('data-id') : el.getAttribute('data-en');
+    if (txt !== null) el.textContent = txt;
+  });
+  $('#pin-url').attr('placeholder',
+    lang === 'id'
+      ? 'https://www.pinterest.com/pin/... atau pin.it/...'
+      : 'https://www.pinterest.com/pin/...'
+  );
+  // active button styling
+  $('#btn-id, #btn-en').removeClass('bg-red-600 text-white').addClass('text-gray-500 hover:text-gray-800');
+  $(`#btn-${lang}`).addClass('bg-red-600 text-white').removeClass('text-gray-500 hover:text-gray-800');
+}
+function setLang(lang) {
+  setCookie('pinload_lang', lang, 30);
+  applyLang(lang);
+}
+
+/* ─── UI State Helpers ─── */
+function showState(state) {
+  $('#result-section').removeClass('hidden');
+  $('#loading-state, #error-state, #success-state').addClass('hidden');
+  $(`#${state}-state`).removeClass('hidden');
+  setTimeout(() => {
+    document.getElementById('result-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+function showError(msg) {
+  showState('error');
+  $('#error-message').text(msg);
+}
+function resetForm() {
+  $('#result-section').addClass('hidden');
+  $('#pin-url').val('').focus();
+}
+
+/* ─── Quality Label Mapper ─── */
+function qualLabel(key) {
+  const m = {
+    V_1080P:'1080p HD', V_720P:'720p HD', V_480P:'480p SD',
+    V_360P:'360p', V_240P:'240p', V_HLSV4:'HLS Adaptive', V_HLSV3:'HLS v3',
+    default:'Default', 'default':'Default'
+  };
+  return m[key] || key;
+}
+
+/* ─── Render Result ─── */
+function renderResult(data) {
+  showState('success');
+
+  const isVideo = data.type === 'video';
+
+  /* Badge */
+  const badgeCls = isVideo
+    ? 'bg-red-600 text-white'
+    : 'bg-pink-500 text-white';
+  $('#type-badge')
+    .attr('class', `absolute top-3 left-3 text-xs font-bold px-3 py-1 rounded-full ${badgeCls}`)
+    .text(isVideo ? '🎬 Video' : '🖼 Photo');
+
+  /* Duration */
+  if (isVideo && data.duration) {
+    const m = Math.floor(data.duration / 60);
+    const s = data.duration % 60;
+    const label = m > 0 ? `${m}m ${s}s` : `${s}s`;
+    $('#duration-badge').text(label).removeClass('hidden');
+  } else {
+    $('#duration-badge').addClass('hidden');
+  }
+
+  /* Preview */
+  $('#preview-video, #preview-image').addClass('hidden');
+  if (isVideo && data.video_url) {
+    $('#preview-video').attr('src', data.video_url).removeClass('hidden');
+  } else if (data.thumbnail) {
+    $('#preview-image').attr('src', data.thumbnail).removeClass('hidden');
+  } else if (data.images && data.images.length) {
+    $('#preview-image').attr('src', data.images[data.images.length - 1].url).removeClass('hidden');
+  }
+
+  /* Uploader */
+  if (data.uploader && (data.uploader.name || data.uploader.username)) {
+    const ava = data.uploader.avatar_url || '';
+    $('#uploader-avatar').attr('src', ava);
+    $('#uploader-name').text(data.uploader.name || data.uploader.username);
+    $('#uploader-username').text(data.uploader.username || '');
+    if (data.uploader.profile_url) {
+      $('#uploader-link').attr('href', data.uploader.profile_url);
+    }
+    $('#uploader-row').removeClass('hidden').css('display','flex');
+  } else {
+    $('#uploader-row').addClass('hidden');
+  }
+
+  /* Title */
+  if (data.title && data.title.trim()) {
+    $('#pin-title').text(data.title).removeClass('hidden');
+  } else {
+    $('#pin-title').addClass('hidden');
+  }
+
+  /* Description */
+  if (data.description && data.description.trim()) {
+    $('#pin-desc').text(data.description).removeClass('hidden');
+  } else {
+    $('#pin-desc').addClass('hidden');
+  }
+
+  /* Image download buttons */
+  const $imgBtns = $('#image-buttons').empty();
+  if (data.images && data.images.length) {
+    data.images.forEach((img, i) => {
+      const lbl = img.quality ? img.quality : `img_${i + 1}`;
+      const sz = (img.width && img.height) ? ` ${img.width}×${img.height}` : '';
+      $imgBtns.append(
+        $('<a>')
+          .attr({ href: img.url, target: '_blank', download: '' })
+          .addClass('inline-flex items-center gap-1 bg-gray-100 hover:bg-red-50 hover:border-red-200 text-gray-700 hover:text-red-700 text-xs font-medium px-3 py-1.5 rounded-lg transition-all border border-gray-200')
+          .text(`📷 ${lbl}${sz}`)
+      );
+    });
+    $('#image-section').removeClass('hidden');
+  } else {
+    $('#image-section').addClass('hidden');
+  }
+
+  /* Video download buttons */
+  const $vidBtns = $('#video-buttons').empty();
+  if (data.videos && data.videos.length) {
+    // Sort: prefer mp4 over hls
+    const sorted = [...data.videos].sort((a, b) => {
+      const prio = k => k.includes('HLSV') ? -1 : (parseInt(k.replace(/\D/g,'')) || 0);
+      return prio(b.quality) - prio(a.quality);
+    });
+    sorted.forEach(vid => {
+      const lbl = qualLabel(vid.quality);
+      const isHls = vid.url && vid.url.includes('.m3u8');
+      const sz = (vid.width && vid.height) ? ` ${vid.width}×${vid.height}` : '';
+      $vidBtns.append(
+        $('<a>')
+          .attr({ href: vid.url, target: '_blank', ...(isHls ? {} : { download: '' }) })
+          .addClass('inline-flex items-center gap-1 bg-gray-100 hover:bg-red-50 hover:border-red-200 text-gray-700 hover:text-red-700 text-xs font-medium px-3 py-1.5 rounded-lg transition-all border border-gray-200')
+          .text(`🎬 ${lbl}${sz}`)
+      );
+    });
+    $('#video-section').removeClass('hidden');
+  } else {
+    $('#video-section').addClass('hidden');
+  }
+
+  /* Main CTA */
+  // Prefer best mp4 video, then best image, then thumbnail
+  let bestUrl = null;
+  if (data.videos && data.videos.length) {
+    const mp4vids = data.videos.filter(v => v.url && !v.url.includes('.m3u8'));
+    bestUrl = mp4vids.length ? mp4vids[0].url : data.videos[0].url;
+  }
+  if (!bestUrl && data.images && data.images.length) {
+    bestUrl = data.images[data.images.length - 1].url;
+  }
+  if (!bestUrl) bestUrl = data.thumbnail;
+
+  if (bestUrl) {
+    $('#main-dl-btn').attr('href', bestUrl).removeClass('hidden');
+  } else {
+    $('#main-dl-btn').addClass('hidden');
+  }
+}
+
+/* ─── Main Download Function ─── */
+function downloadPin() {
+  const url = ($('#pin-url').val() || '').trim();
+  if (!url) {
+    showError('Masukkan URL Pinterest yang valid. / Please enter a valid Pinterest URL.');
+    return;
+  }
+  if (!url.includes('pinterest.') && !url.includes('pin.it')) {
+    showError('URL tidak valid. Harus berupa URL Pinterest. / Invalid URL. Must be a Pinterest URL.');
+    return;
+  }
+
+  showState('loading');
+
+  $.ajax({
+    url: `${API_BASE}/?url=${encodeURIComponent(url)}`,
+    method: 'GET',
+    timeout: 20000,
+    success(data) {
+      if (!data.success) {
+        showError(data.error || 'Gagal mengambil data pin. / Failed to fetch pin data.');
+        return;
+      }
+      renderResult(data);
+    },
+    error(xhr) {
+      let msg = 'Terjadi kesalahan jaringan. Coba lagi. / Network error. Please try again.';
+      try {
+        const r = JSON.parse(xhr.responseText);
+        if (r && r.error) msg = r.error;
+      } catch (_) {}
+      if (xhr.status === 404) msg = 'Pin tidak ditemukan atau bersifat privat. / Pin not found or is private.';
+      if (xhr.status === 429) msg = 'Terlalu banyak permintaan. Coba beberapa saat lagi. / Too many requests. Please wait a moment.';
+      showError(msg);
+    }
+  });
+}
+
+/* ─── FAQ Accordion ─── */
+$(document).on('click', '.faq-btn', function () {
+  const $item = $(this).closest('.faq-item');
+  const $body = $item.find('.faq-body');
+  const $chev = $(this).find('.faq-chevron');
+  const wasOpen = !$body.hasClass('hidden');
+
+  // close all
+  $('.faq-body').addClass('hidden');
+  $('.faq-chevron').css('transform', '');
+
+  if (!wasOpen) {
+    $body.removeClass('hidden');
+    $chev.css('transform', 'rotate(180deg)');
+  }
+});
+
+/* ─── Enter key ─── */
+$('#pin-url').on('keydown', function (e) {
+  if (e.key === 'Enter') downloadPin();
+});
+
+/* ─── Init ─── */
+$(function () {
+  const lang = getCookie('pinload_lang') || 'id';
+  applyLang(lang);
+});
+</script>
+</body>
+</html>
